@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillsauth.com/schemas/rekor-policy.schema.json",
+  "title": "Rekor policy",
+  "type": "object",
+  "required": ["version", "updatedAt", "verification", "failureBehavior"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string", "pattern": "^1\\.0$" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requireOidcIssuer",
+        "requireTrustedIdentityMatch",
+        "requireBundleMediaType",
+        "requireCertificateChainValidation",
+        "requireTlogEntry",
+        "offlineModeAllowed"
+      ],
+      "properties": {
+        "requireOidcIssuer": {
+          "type": "string",
+          "const": "https://token.actions.githubusercontent.com"
+        },
+        "requireTrustedIdentityMatch": { "type": "boolean" },
+        "requireBundleMediaType": {
+          "type": "string",
+          "const": "application/vnd.dev.sigstore.bundle.v0.3+json"
+        },
+        "requireCertificateChainValidation": { "type": "boolean" },
+        "requireTlogEntry": { "type": "boolean" },
+        "offlineModeAllowed": { "type": "boolean" }
+      }
+    },
+    "failureBehavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "onIdentityMismatch",
+        "onIssuerMismatch",
+        "onMalformedBundle",
+        "onTlogUnavailable",
+        "onRevocationFetchError"
+      ],
+      "properties": {
+        "onIdentityMismatch": { "$ref": "#/$defs/failureAction" },
+        "onIssuerMismatch": { "$ref": "#/$defs/failureAction" },
+        "onMalformedBundle": { "$ref": "#/$defs/failureAction" },
+        "onTlogUnavailable": { "$ref": "#/$defs/failureAction" },
+        "onRevocationFetchError": { "$ref": "#/$defs/failureAction" }
+      }
+    }
+  },
+  "$defs": {
+    "failureAction": {
+      "type": "string",
+      "enum": [
+        "fail_closed",
+        "warn_and_continue",
+        "warn_if_offline_mode_enabled"
+      ]
+    }
+  }
+}
+

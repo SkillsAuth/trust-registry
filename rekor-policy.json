@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-04-28T00:00:00Z",
+  "verification": {
+    "requireOidcIssuer": "https://token.actions.githubusercontent.com",
+    "requireTrustedIdentityMatch": true,
+    "requireBundleMediaType": "application/vnd.dev.sigstore.bundle.v0.3+json",
+    "requireCertificateChainValidation": true,
+    "requireTlogEntry": true,
+    "offlineModeAllowed": true
+  },
+  "failureBehavior": {
+    "onIdentityMismatch": "fail_closed",
+    "onIssuerMismatch": "fail_closed",
+    "onMalformedBundle": "fail_closed",
+    "onTlogUnavailable": "warn_if_offline_mode_enabled",
+    "onRevocationFetchError": "warn_and_continue"
+  }
+}
+

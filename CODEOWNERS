@@ -1,0 +1,12 @@
+# Copy this file to trust-registry root as CODEOWNERS.
+# Require explicit ownership for all trust-sensitive files.
+
+* @SkillsAuth/security @SkillsAuth/platform-admins
+
+/trusted-identities.json @SkillsAuth/security @SkillsAuth/platform-admins
+/rekor-policy.json @SkillsAuth/security @SkillsAuth/platform-admins
+/revocations.json @SkillsAuth/security @SkillsAuth/platform-admins
+/schemas/* @SkillsAuth/security
+/CHANGELOG.md @SkillsAuth/security @SkillsAuth/platform-admins
+/OPERATIONS.md @SkillsAuth/security @SkillsAuth/platform-admins
+

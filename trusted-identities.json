@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-04-28T00:00:00Z",
+  "owner": "SkillsAuth",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "identities": [
+    {
+      "id": "skillsauth-tier0-main",
+      "description": "Tier 0 signer for SkillsAuth manifest backfill/publish signing",
+      "repository": "SkillsAuth/skillsai",
+      "workflow": ".github/workflows/sign-skill-manifests.yml",
+      "ref": "refs/heads/main",
+      "subjectAlternativeName": "https://github.com/SkillsAuth/skillsai/.github/workflows/sign-skill-manifests.yml@refs/heads/main",
+      "sourceRepositoryOwner": "SkillsAuth",
+      "allowSelfHostedRunner": true,
+      "status": "active"
+    }
+  ]
+}
+

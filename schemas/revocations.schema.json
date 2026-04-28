@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillsauth.com/schemas/revocations.schema.json",
+  "title": "Revocations",
+  "type": "object",
+  "required": ["version", "updatedAt", "revokedDigests", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string", "pattern": "^1\\.0$" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "revokedDigests": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/sha256Hex" },
+      "uniqueItems": true
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "manifestDigest",
+          "fqn",
+          "reason",
+          "revokedAt",
+          "revokedBy"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "manifestDigest": { "$ref": "#/$defs/sha256Hex" },
+          "fqn": { "type": "string", "minLength": 3 },
+          "reason": { "type": "string", "minLength": 3 },
+          "revokedAt": { "type": "string", "format": "date-time" },
+          "revokedBy": { "type": "string", "minLength": 1 },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256Hex": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}
+
