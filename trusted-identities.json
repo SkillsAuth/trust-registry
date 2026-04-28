@@ -1,19 +1,30 @@
 {
   "version": "1.0",
-  "updatedAt": "2026-04-28T00:00:00Z",
+  "updatedAt": "2026-04-28T12:00:00Z",
   "owner": "SkillsAuth",
   "issuer": "https://token.actions.githubusercontent.com",
   "identities": [
     {
+      "id": "beinghimansh-tier0-main",
+      "description": "Current Tier 0 signer during transition window",
+      "repository": "beinghimansh/skillsai",
+      "workflow": ".github/workflows/sign-skill-manifests.yml",
+      "ref": "refs/heads/main",
+      "subjectAlternativeName": "https://github.com/beinghimansh/skillsai/.github/workflows/sign-skill-manifests.yml@refs/heads/main",
+      "sourceRepositoryOwner": "beinghimansh",
+      "allowSelfHostedRunner": true,
+      "status": "active"
+    },
+    {
       "id": "skillsauth-tier0-main",
-      "description": "Tier 0 signer for SkillsAuth manifest backfill/publish signing",
+      "description": "Future Tier 0 signer after repository transfer cutover",
       "repository": "SkillsAuth/skillsai",
       "workflow": ".github/workflows/sign-skill-manifests.yml",
       "ref": "refs/heads/main",
       "subjectAlternativeName": "https://github.com/SkillsAuth/skillsai/.github/workflows/sign-skill-manifests.yml@refs/heads/main",
       "sourceRepositoryOwner": "SkillsAuth",
       "allowSelfHostedRunner": true,
-      "status": "active"
+      "status": "disabled"
     }
   ]
 }
