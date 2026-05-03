@@ -1,31 +1,33 @@
 {
-  "version": "1.0",
-  "updatedAt": "2026-04-28T12:00:00Z",
+  "version": "1.2",
+  "updatedAt": "2026-05-03T00:00:00Z",
   "owner": "SkillsAuth",
   "issuer": "https://token.actions.githubusercontent.com",
   "identities": [
     {
+      "id": "skillsauth-trust-svc-tier0-main",
+      "description": "Tier 0 production signer (ADR-007). SkillsAuth org-owned trust-svc reusable signing workflow (OIDC SAN is the called workflow file).",
+      "repository": "SkillsAuth/trust-svc",
+      "workflow": ".github/workflows/sign-execute.yml",
+      "ref": "refs/heads/main",
+      "subjectAlternativeName": "https://github.com/SkillsAuth/trust-svc/.github/workflows/sign-execute.yml@refs/heads/main",
+      "sourceRepositoryOwner": "SkillsAuth",
+      "allowSelfHostedRunner": true,
+      "status": "active",
+      "activatedAt": "2026-05-02T00:00:00Z"
+    },
+    {
       "id": "beinghimansh-tier0-main",
-      "description": "Current Tier 0 signer during transition window",
+      "description": "Legacy Tier 0 signer. Revoked at Phase 1 cutover (ADR-007). Bundles signed before revokedAt remain verifiable for audit; new signatures are rejected by trust-svc.",
       "repository": "beinghimansh/skillsai",
       "workflow": ".github/workflows/sign-skill-manifests.yml",
       "ref": "refs/heads/main",
       "subjectAlternativeName": "https://github.com/beinghimansh/skillsai/.github/workflows/sign-skill-manifests.yml@refs/heads/main",
       "sourceRepositoryOwner": "beinghimansh",
       "allowSelfHostedRunner": true,
-      "status": "active"
-    },
-    {
-      "id": "skillsauth-tier0-main",
-      "description": "Future Tier 0 signer after repository transfer cutover",
-      "repository": "SkillsAuth/skillsai",
-      "workflow": ".github/workflows/sign-skill-manifests.yml",
-      "ref": "refs/heads/main",
-      "subjectAlternativeName": "https://github.com/SkillsAuth/skillsai/.github/workflows/sign-skill-manifests.yml@refs/heads/main",
-      "sourceRepositoryOwner": "SkillsAuth",
-      "allowSelfHostedRunner": true,
-      "status": "disabled"
+      "status": "revoked",
+      "revokedAt": "2026-05-02T00:00:00Z",
+      "revokedReason": "ADR-007 cutover; replaced by skillsauth-trust-svc-tier0-main."
     }
   ]
 }
-
