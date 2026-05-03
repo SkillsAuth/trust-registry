@@ -10,7 +10,7 @@ It is intentionally minimal and contains only verification policy artifacts.
 
 The trust registry is a public, read-only policy source for consumers verifying SkillsAuth Sigstore bundles.
 
-- Private signing remains in `SkillsAuth/skillsai` (private repo).
+- Production signing runs from **`SkillsAuth/trust-svc`** (private org repo); the product monorepo **`SkillsAuth/skillsai`** consumes signatures via `trust-client`, not the signer identity.
 - Public policy and revocation metadata live in `SkillsAuth/trust-registry` (public repo).
 - Verifiers should pin policy by immutable release tag or commit SHA, never mutable `main`.
 
@@ -34,13 +34,15 @@ Do not store in trust-registry:
 
 ## Minimal Publisher Model (Current)
 
-Current trusted signer (Tier 0) should be constrained to this workflow identity:
+Tier **T0** production signer is pinned in `trusted-identities.json` — canonical workflow identity:
 
-- `https://github.com/SkillsAuth/skillsai/.github/workflows/sign-skill-manifests.yml@refs/heads/main`
+- `https://github.com/SkillsAuth/trust-svc/.github/workflows/sign-execute.yml@refs/heads/main`
 
-OIDC issuer:
+OIDC issuer GitHub uses for that workflow:
 
 - `https://token.actions.githubusercontent.com`
+
+Verifiers match the Fulcio **URI SAN** on the leaf certificate (and optional JWT claims) against `subjectAlternativeName` for identity id **`skillsauth-trust-svc-tier0-main`**. Legacy identities remain in the file for audit only (`status: revoked`).
 
 ## Consumer Guidance
 

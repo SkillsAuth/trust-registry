@@ -1,0 +1,108 @@
+# Public/private split CI guard (ADR-007).
+#
+# This workflow lives in the PUBLIC repo SkillsAuth/trust-registry. It
+# fails any pull request that adds files outside the approved
+# policy-only allow-list. Together with branch protection + CODEOWNERS,
+# it prevents the public registry from becoming a place where signer
+# code, workflows, secrets, or tenant data accidentally land.
+#
+# Allow-list (top-level, exact paths or directory prefixes):
+#
+#   trusted-identities.json
+#   rekor-policy.json
+#   revocations.json
+#   schemas/                       (JSON schemas only)
+#   CHANGELOG.md
+#   OPERATIONS.md
+#   PINNED_CONSUMPTION.md
+#   README.md
+#   LICENSE
+#   CODEOWNERS                     (single file, no subdirs)
+#   .gitignore
+#   .github/workflows/policy-only-guard.yml   (this file only)
+#
+# Anything else - including any other file under .github/workflows/,
+# any source code, any infra config - is rejected.
+
+name: Policy-only guard
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  guard:
+    name: Reject non-policy files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed files
+        id: diff
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            head="${{ github.event.pull_request.head.sha }}"
+          else
+            # push to main: compare against previous commit
+            base="${{ github.event.before }}"
+            head="${{ github.event.after }}"
+          fi
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            # First push or shallow clone fallback: just list everything
+            git ls-files > changed.txt
+          else
+            git diff --name-only "$base" "$head" > changed.txt
+          fi
+          echo "Changed files:"
+          cat changed.txt
+
+      - name: Enforce policy-only allow-list
+        run: |
+          set -euo pipefail
+          deny=0
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            ok=0
+            case "$f" in
+              trusted-identities.json|rekor-policy.json|revocations.json) ok=1 ;;
+              CHANGELOG.md|OPERATIONS.md|PINNED_CONSUMPTION.md|README.md) ok=1 ;;
+              LICENSE|CODEOWNERS|CODEOWNERS.example|.gitignore) ok=1 ;;
+              .github/workflows/policy-only-guard.yml) ok=1 ;;
+            esac
+            if [[ "$ok" -eq 0 ]] && [[ "$f" =~ ^schemas/[^/]+\.json$ ]]; then
+              ok=1
+            fi
+            if [[ "$ok" -eq 0 ]]; then
+              echo "::error file=$f::ADR-007 violation: $f is not on the trust-registry policy-only allow-list."
+              deny=1
+            fi
+          done < changed.txt
+          if [ "$deny" -ne 0 ]; then
+            echo "::error::This PR adds or modifies files outside the policy-only allow-list."
+            echo "::error::See https://github.com/SkillsAuth/trust-svc/blob/main/docs/adr/ADR-007-public-private-repo-split.md"
+            exit 1
+          fi
+          echo "All changed files are within the policy-only allow-list."
+
+      - name: Validate JSON policy files against schemas
+        run: |
+          set -euo pipefail
+          # Light validation: parse JSON and confirm it parses. The
+          # full schema validation happens in `validate-policy.yml`
+          # (separate workflow added in OPERATIONS.md).
+          for f in trusted-identities.json rekor-policy.json revocations.json; do
+            if [ -f "$f" ]; then
+              echo "Parsing $f"
+              python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$f"
+            fi
+          done
